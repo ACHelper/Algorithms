@@ -1,15 +1,92 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
 class Solution {
-    public int specialArray(int[] nums) {
-        for (int i = 0; i <= nums.length; i++) {
-            int x = 0;
+    public boolean isEvenOddTree(TreeNode root) {
+        boolean evenNow = false;
+        int level = 0;
+        
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        
+        while (!q.isEmpty()) {
+            List<TreeNode> curLevel = new ArrayList<>();
             
-            for (int j = 0; j < nums.length; j++) {
-                if (nums[j] >= i) x++;
+            while (!q.isEmpty()) {
+                TreeNode temp = q.poll();
+                curLevel.add(temp);
             }
             
-            if (x == i) return i;
+            if (evenNow) {
+                for (TreeNode cur : curLevel) {
+                    if (cur.val % 2 == 1) {
+                        return false;
+                    }   
+                }
+            } else {
+                for (TreeNode cur : curLevel) {
+                    if (cur.val % 2 == 0) {
+                        return false;
+                    }
+                }
+            }
+            
+            
+            TreeNode prevN = curLevel.get(0);
+            int prev = prevN.val;
+            int i = 0;
+            if (level % 2 == 0) {
+                // Strictly increasing
+                for (TreeNode cur : curLevel) {
+                    if (i == 0) {
+                        i++;
+                        continue;
+                    }
+                    if (cur.val <= prev) {
+                        return false;
+                    }                    
+                    prev = cur.val;
+                }
+            } else {
+                for (TreeNode cur : curLevel) {
+                    if (i == 0) {
+                        i++;
+                        continue;
+                    }
+                    if (cur.val >= prev) {
+                        return false;
+                    }                    
+                    prev = cur.val;
+                }
+            }
+            
+            
+            for (TreeNode cur : curLevel) {
+                if (cur.left != null) {
+                    q.add(cur.left);
+                }
+                if (cur.right != null) {
+                    q.add(cur.right);
+                }
+            }
+            
+            // TODO put children intor tree
+            evenNow = !evenNow;
+            level++;
         }
         
-        return -1;
+        return true;
     }
 }
